@@ -22,31 +22,12 @@ type CanvasActions = {
 
 export type CanvasStore = CanvasState & CanvasActions
 
-const initialText: CanvasTextNode = {
-  id: 'text1',
-  x: 50,
-  y: 50,
-  text: 'placeholer',
-  fontSize: 24,
-  fill: '#000',
-  fontFamily: 'Arial',
-  draggable: true,
-}
-
-const initialImage: CanvasImage = {
-  id: 'image1',
-  x: 50,
-  y: 50,
-  width: 0,
-  height: 0,
-  src: '',
-}
 export const useCanvasStore = create<CanvasStore>()(
   devtools((set) => ({
     canvasId: 'canvas1',
-    texts: [initialText],
+    texts: [],
     editor: null,
-    images: [initialImage],
+    images: [],
     setCanvasId: (canvasId) => set({ canvasId }),
     setTexts: (texts) => set({ texts }),
     addText: (text) =>

@@ -38,3 +38,23 @@ export interface CanvasModule {
   }
   previewUrl: string
 }
+
+export const initialText: CanvasTextNode = {
+  id: 'text1',
+  x: 50,
+  y: 50,
+  text: 'placeholer',
+  fontSize: 24,
+  fill: '#000',
+  fontFamily: 'Arial',
+  draggable: true,
+}
+
+export const initialImage: CanvasImage = {
+  id: 'image1',
+  x: 50,
+  y: 50,
+  width: 100,
+  height: 100,
+  src: '/doguri.jpeg',
+}

@@ -4,6 +4,8 @@ import {
   CANVAS_HEIGHT,
   type CanvasTextNode,
   type CanvasImage,
+  initialText,
+  initialImage,
 } from '@/entities/canvas'
 import { useCanvasStore, useModuleStore } from '@/entities/canvas'
 import type { KonvaEventObject } from 'konva/lib/Node'
@@ -19,8 +21,6 @@ type Props = {
     images: CanvasImage[]
   }
 }
-
-const url = '/doguri.jpeg'
 
 export default function EditCanvas(props: Props) {
   const { id, data } = props
@@ -50,16 +50,7 @@ export default function EditCanvas(props: Props) {
     if (!pos) return
 
     const newId = `text-${Date.now()}`
-    const newText: CanvasTextNode = {
-      id: newId,
-      x: pos.x,
-      y: pos.y,
-      text: '새 텍스트',
-      fontSize: 24,
-      fill: '#000',
-      fontFamily: 'Arial',
-      draggable: true,
-    }
+    const newText: CanvasTextNode = { ...initialText, id: newId, x: pos.x, y: pos.y }
 
     // [수정] setTexts가 호출되면, 위의 useEffect가 자동으로 미리보기를 갱신합니다.
     addText(newText)
@@ -121,14 +112,7 @@ export default function EditCanvas(props: Props) {
 
   const handleAddImage = () => {
     const newId = `image-${Date.now()}`
-    const newImage: CanvasImage = {
-      id: newId,
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      src: url,
-    }
+    const newImage: CanvasImage = { ...initialImage, id: newId }
     addImage(newImage)
   }
 

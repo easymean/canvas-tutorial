@@ -1,5 +1,5 @@
 export { useCanvasStore } from './model/useCanvasStore'
 export { useModuleStore } from './model/useModuleStore'
 export type { CanvasStore } from './model/useCanvasStore'
-export type { CanvasTextNode, CanvasEditorState, CanvasImage, CanvasModule } from './types'
 export * from './config/consts'
+export * from './types'
