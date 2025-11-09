@@ -23,6 +23,9 @@ dependencies:
   react-konva:
     specifier: ^19.2.0
     version: 19.2.0(@types/react@19.2.2)(konva@10.0.8)(react-dom@19.2.0)(react@19.2.0)
+  use-image:
+    specifier: ^1.1.4
+    version: 1.1.4(react-dom@19.2.0)(react@19.2.0)
   zustand:
     specifier: ^5.0.8
     version: 5.0.8(@types/react@19.2.2)(react@19.2.0)
@@ -2011,6 +2014,16 @@ packages:
     dependencies:
       punycode: 2.3.1
     dev: true
+
+  /use-image@1.1.4(react-dom@19.2.0)(react@19.2.0):
+    resolution: {integrity: sha512-P+swhszzHHgEb2X2yQ+vQNPCq/8Ks3hyfdXAVN133pvnvK7UK++bUaZUa5E+A3S02Mw8xOCBr9O6CLhk2fjrWA==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+    dev: false
 
   /which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}

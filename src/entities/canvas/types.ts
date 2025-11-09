@@ -20,3 +20,21 @@ export interface CanvasEditorState {
   fill: string
   fontFamily: string
 }
+
+export interface CanvasImage {
+  id: string
+  x: number
+  y: number
+  width: number
+  height: number
+  src: string
+}
+
+export interface CanvasModule {
+  id: string
+  data: {
+    texts: CanvasTextNode[]
+    images: CanvasImage[]
+  }
+  previewUrl: string
+}

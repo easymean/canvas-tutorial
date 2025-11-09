@@ -1,6 +1,6 @@
 import { PREVIEW_WIDTH, PREVIEW_HEIGHT } from '@/entities/canvas'
 
-export const PreviewImage = ({ previewImage }: { previewImage: string }) => {
+export const PreviewImage = ({ src, onClick }: { src?: string; onClick: () => void }) => {
   return (
     <div
       style={{
@@ -9,10 +9,11 @@ export const PreviewImage = ({ previewImage }: { previewImage: string }) => {
         border: '1px solid #007bff', // 파란색 테두리
         backgroundColor: '#f8f9fa', // 연한 배경색
       }}
+      onClick={onClick}
     >
-      {previewImage && (
+      {src && (
         <img
-          src={previewImage}
+          src={src}
           alt="Canvas Preview"
           style={{
             width: '100%',
@@ -20,6 +21,11 @@ export const PreviewImage = ({ previewImage }: { previewImage: string }) => {
             objectFit: 'contain', // 캔버스 비율 유지
           }}
         />
+      )}
+      {!src && (
+        <div className="flex items-center justify-center">
+          <p>No image</p>
+        </div>
       )}
     </div>
   )

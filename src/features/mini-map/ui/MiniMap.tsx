@@ -1,11 +1,20 @@
-import { useModuleStore } from '@/entities/canvas'
+import { type CanvasModule } from '@/entities/canvas'
+import { PreviewImage } from './PreviewImage'
 
-export default function MiniMap() {
-  const { modules } = useModuleStore()
+type Props = {
+  modules: CanvasModule[]
+  onSelectModule: (id: string) => void
+}
+
+export default function MiniMap(props: Props) {
   return (
     <div className="flex flex-col items-center justify-center">
-      {modules.map((module) => (
-        <img key={module.id} src={module.previewUrl} alt={module.id} className="w-10 h-10" />
+      {props.modules.map((module) => (
+        <PreviewImage
+          key={module.id}
+          src={module.previewUrl}
+          onClick={() => props.onSelectModule(module.id)}
+        />
       ))}
     </div>
   )

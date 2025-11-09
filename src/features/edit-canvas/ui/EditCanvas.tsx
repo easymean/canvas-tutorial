@@ -1,19 +1,42 @@
 import { Stage, Layer, Text } from 'react-konva'
-import { CANVAS_WIDTH, CANVAS_HEIGHT, type CanvasTextNode } from '@/entities/canvas'
+import {
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  type CanvasTextNode,
+  type CanvasImage,
+} from '@/entities/canvas'
 import { useCanvasStore, useModuleStore } from '@/entities/canvas'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import { useRef, useEffect } from 'react'
 import Konva from 'konva'
 import EditableText from './EditableText'
+import { EditableImage } from './EditableImage'
 
 type Props = {
   id: string
-  data: object
+  data: {
+    texts: CanvasTextNode[]
+    images: CanvasImage[]
+  }
 }
+
+const url = '/doguri.jpeg'
 
 export default function EditCanvas(props: Props) {
   const { id, data } = props
-  const { texts, editor, updateText, addText, setEditor } = useCanvasStore()
+  const {
+    setCanvasId,
+    texts,
+    editor,
+    updateText,
+    addText,
+    setTexts,
+    setEditor,
+    images,
+    updateImage,
+    addImage,
+    setImages,
+  } = useCanvasStore()
   const { updateModule } = useModuleStore()
   const stageRef = useRef<Konva.Stage>(null)
 
@@ -88,12 +111,34 @@ export default function EditCanvas(props: Props) {
     const newX = e.target.x()
     const newY = e.target.y()
 
-    // [수정] setTexts가 호출되면, 위의 useEffect가 자동으로 미리보기를 갱신합니다.
-    updateText(id, { x: newX, y: newY })
+    const type = e.currentTarget.name()
+    if (type === 'Text') {
+      updateText(id, { x: newX, y: newY })
+    } else if (type === 'Image') {
+      updateImage(id, { x: newX, y: newY })
+    }
   }
 
+  const handleAddImage = () => {
+    const newId = `image-${Date.now()}`
+    const newImage: CanvasImage = {
+      id: newId,
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      src: url,
+    }
+    addImage(newImage)
+  }
+
+  useEffect(() => {
+    setCanvasId(id)
+    setTexts(data.texts)
+    setImages(data.images)
+  }, [data.texts, data.images, setTexts, setImages, setCanvasId, id])
+
   // [추가] 캔버스 상태가 변경될 때마다 미리보기를 업데이트하는 Effect
-  // (texts 배열이 바뀔 때 = 텍스트 추가, 수정, 이동 완료 시)
   useEffect(() => {
     if (stageRef.current) {
       // Data URL 생성.
@@ -101,36 +146,41 @@ export default function EditCanvas(props: Props) {
       const dataURL = stageRef.current.toDataURL({ pixelRatio: 0.5 })
       updateModule(id, { previewUrl: dataURL })
     }
-  }, [texts, id, data, updateModule]) // 'texts' 상태가 변경될 때마다 이 Effect가 실행됩니다.
+  }, [texts, images, id, data, updateModule]) // 'texts' 상태가 변경될 때마다 이 Effect가 실행됩니다.
 
   return (
-    <div className="border-solid border-2 border-gray-300">
-      <Stage
-        width={CANVAS_WIDTH} // [수정] 변수 사용
-        height={CANVAS_HEIGHT}
-        ref={stageRef}
-        onDblClick={handleStageDblClick}
-      >
-        <Layer>
-          {texts.map((text) => (
-            <Text
-              key={text.id}
-              id={text.id}
-              x={text.x}
-              y={text.y}
-              text={text.text}
-              fontSize={text.fontSize}
-              fill={text.fill}
-              fontFamily={text.fontFamily}
-              draggable={text.draggable}
-              onDblClick={handleTextDblClick}
-              onDragEnd={handleDragEnd}
-              visible={!editor || editor.id !== text.id}
-            />
-          ))}
-        </Layer>
-      </Stage>
-      {editor && <EditableText editor={editor} />}
+    <div>
+      <button onClick={handleAddImage}>Add Image Button</button>
+      <div className="border-solid border-2 border-gray-300">
+        <Stage
+          width={CANVAS_WIDTH} // [수정] 변수 사용
+          height={CANVAS_HEIGHT}
+          ref={stageRef}
+          onDblClick={handleStageDblClick}
+        >
+          <Layer>
+            {texts.map((text) => (
+              <Text
+                key={text.id}
+                id={text.id}
+                x={text.x}
+                y={text.y}
+                text={text.text}
+                fontSize={text.fontSize}
+                fill={text.fill}
+                fontFamily={text.fontFamily}
+                draggable={text.draggable}
+                onDblClick={handleTextDblClick}
+                onDragEnd={handleDragEnd}
+              />
+            ))}
+            {images.map((image) => (
+              <EditableImage key={image.id} image={image} onDragEnd={handleDragEnd} />
+            ))}
+          </Layer>
+        </Stage>
+        {editor && <EditableText editor={editor} />}
+      </div>
     </div>
   )
 }
