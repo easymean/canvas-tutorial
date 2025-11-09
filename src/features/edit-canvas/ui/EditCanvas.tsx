@@ -9,7 +9,7 @@ import {
 } from '@/entities/canvas'
 import { useCanvasStore, useModuleStore } from '@/entities/canvas'
 import type { KonvaEventObject } from 'konva/lib/Node'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import Konva from 'konva'
 import EditableText from './EditableText'
 import { EditableImage } from './EditableImage'
@@ -97,24 +97,37 @@ export default function EditCanvas(props: Props) {
     })
   }
 
-  const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
-    const id = e.target.id()
-    const newX = e.target.x()
-    const newY = e.target.y()
+  const handleDragEnd = useCallback(
+    (e: KonvaEventObject<DragEvent>) => {
+      const id = e.target.id()
+      const newX = e.target.x()
+      const newY = e.target.y()
 
-    const type = e.currentTarget.name()
-    if (type === 'Text') {
-      updateText(id, { x: newX, y: newY })
-    } else if (type === 'Image') {
-      updateImage(id, { x: newX, y: newY })
-    }
-  }
+      const type = e.currentTarget.name()
+      if (type === 'Text') {
+        updateText(id, { x: newX, y: newY })
+      } else if (type === 'Image') {
+        updateImage(id, { x: newX, y: newY })
+      }
+    },
+    [updateText, updateImage],
+  )
 
   const handleAddImage = () => {
     const newId = `image-${Date.now()}`
     const newImage: CanvasImage = { ...initialImage, id: newId }
     addImage(newImage)
   }
+
+  const updatePreviewUrl = useCallback(() => {
+    if (stageRef.current) {
+      // Data URL 생성.
+      // pixelRatio를 0.5 정도로 낮추면 생성 속도가 빠르고 이미지 용량이 작아집니다.
+      const dataURL = stageRef.current.toDataURL({ pixelRatio: 0.5, mimeType: 'image/webp' })
+      console.log(dataURL)
+      updateModule(id, { previewUrl: dataURL })
+    }
+  }, [id, updateModule])
 
   useEffect(() => {
     setCanvasId(id)
@@ -124,14 +137,8 @@ export default function EditCanvas(props: Props) {
 
   // [추가] 캔버스 상태가 변경될 때마다 미리보기를 업데이트하는 Effect
   useEffect(() => {
-    if (stageRef.current) {
-      // Data URL 생성.
-      // pixelRatio를 0.5 정도로 낮추면 생성 속도가 빠르고 이미지 용량이 작아집니다.
-      const dataURL = stageRef.current.toDataURL({ pixelRatio: 0.5 })
-      updateModule(id, { previewUrl: dataURL })
-    }
-  }, [texts, images, id, data, updateModule]) // 'texts' 상태가 변경될 때마다 이 Effect가 실행됩니다.
-
+    updatePreviewUrl()
+  }, [texts, images, updatePreviewUrl])
   return (
     <div>
       <button onClick={handleAddImage}>Add Image Button</button>
